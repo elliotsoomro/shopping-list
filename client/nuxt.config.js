@@ -26,7 +26,8 @@ export default {
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/fontawesome'
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -36,8 +37,21 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    'nuxt-vue-select'
   ],
+
+  buefy: {
+    defaultIconPack: 'fas',
+    defaultIconComponent: 'FontAwesomeIcon'
+  },
+
+  fontawesome: {
+    icons: {
+      // solid: true,  // include the full pack in the bundle, not recommended
+      solid: ['faPen', 'faTrash', 'faAngleUp', 'faAngleDown']
+    }
+  },
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {},
