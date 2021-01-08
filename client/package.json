@@ -17,6 +17,7 @@
     "@nuxtjs/pwa": "^3.0.2",
     "core-js": "^3.6.5",
     "cuid": "^2.1.8",
+    "dayjs": "^1.10.2",
     "nuxt": "^2.14.6",
     "nuxt-buefy": "^0.4.3",
     "nuxt-vue-select": "^0.1.4"

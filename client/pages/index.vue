@@ -1,21 +1,35 @@
 <template>
   <section class="section">
     <div class="shopping-list">
+      <div class="mb-4" style="width: 200px;">
+        <v-select
+          v-model="sorting"
+          :options="[
+            { label: 'Order added', value: 'createdAt' },
+            { label: 'Alphabetical', value: 'alphabetical' },
+            { label: 'Categories', value: 'categories' }
+          ]"
+          :reduce="sort => sort.value"
+        />
+      </div>
+
       <div class="box">
         <b-field>
           <v-select
             ref="select"
+            label="title"
+            placeholder="Add item"
             :value="selected"
             :options="options"
+            :create-option="item => ({ title: item, categoryId: null })"
             taggable
-            placeholder="Add item"
             @input="add"
           />
         </b-field>
 
-        <div>
+        <template v-if="sorting === 'createdAt'">
           <div
-            v-for="item in unchecked"
+            v-for="item in sortedCreatedAt"
             :key="item.id"
             class="list-item"
           >
@@ -33,7 +47,61 @@
               <b-icon icon="trash" @click.native="remove(item.id)" />
             </div>
           </div>
-        </div>
+        </template>
+
+        <template v-if="sorting === 'alphabetical'">
+          <div
+            v-for="item in sortedAlphabetical"
+            :key="item.id"
+            class="list-item"
+          >
+            <div class="is-flex is-align-items-center">
+              <b-checkbox v-model="item.checked" />
+
+              <div>
+                {{ item.title }}
+              </div>
+            </div>
+
+            <div class="actions">
+              <b-icon icon="pen" @click.native="edit(item)" />
+
+              <b-icon icon="trash" @click.native="remove(item.id)" />
+            </div>
+          </div>
+        </template>
+
+        <template v-if="sorting === 'categories'">
+          <div
+            v-for="category in sortedCategories"
+            :key="category.id"
+            class="mb-2"
+          >
+            <div class="is-size-7 mb-2">
+              {{ category.name.toUpperCase() }}
+            </div>
+
+            <div
+              v-for="item in category.items"
+              :key="item.id"
+              class="list-item"
+            >
+              <div class="is-flex is-align-items-center">
+                <b-checkbox v-model="item.checked" />
+
+                <div>
+                  {{ item.title }}
+                </div>
+              </div>
+
+              <div class="actions">
+                <b-icon icon="pen" @click.native="edit(item)" />
+
+                <b-icon icon="trash" @click.native="remove(item.id)" />
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
 
       <b-modal v-model="isModalActive">
@@ -48,6 +116,7 @@
               :options="categories"
               :reduce="category => category.id"
               label="name"
+              placeholder="Category"
             />
           </b-field>
 
@@ -94,6 +163,7 @@
 
 <script>
 import cuid from 'cuid'
+import dayjs from 'dayjs'
 
 export default {
   data () {
@@ -102,31 +172,36 @@ export default {
       editItem: null,
       items: [
         {
-          id: 1,
+          id: cuid(),
+          createdAt: dayjs(),
           title: 'A-fil',
           categoryId: 7,
           checked: false
         },
         {
-          id: 2,
+          id: cuid(),
+          createdAt: dayjs(),
           title: 'flingor',
           categoryId: 8,
           checked: false
         },
         {
-          id: 3,
+          id: cuid(),
+          createdAt: dayjs(),
           title: 'ägg',
           categoryId: 7,
           checked: true
         },
         {
-          id: 4,
+          id: cuid(),
+          createdAt: dayjs(),
           title: 'fryst kycklingfilé',
           categoryId: 4,
           checked: true
         },
         {
-          id: 5,
+          id: cuid(),
+          createdAt: dayjs(),
           title: 'rasker',
           categoryId: 1,
           checked: false
@@ -167,25 +242,62 @@ export default {
         }
       ],
       showChecked: false,
-      isModalActive: false
+      isModalActive: false,
+      sorting: 'createdAt'
     }
   },
   computed: {
-    unchecked () {
-      return this.items.filter(item => item.checked === false)
-    },
     checked () {
       return this.items.filter(item => item.checked === true)
     },
+    unchecked () {
+      return this.items.filter(item => item.checked === false)
+    },
     options () {
-      return [...new Set(this.items.map(item => item.title))]
+      return this.items
+    },
+    sortedCreatedAt () {
+      const items = [...this.unchecked].sort((a, b) => {
+        const createdAtA = a.createdAt
+        const createdAtB = b.createdAt
+        return (createdAtA > createdAtB) ? -1 : (createdAtA < createdAtB) ? 1 : 0
+      })
+      return items
+    },
+    sortedAlphabetical () {
+      const items = [...this.unchecked].sort((a, b) => {
+        const titleA = a.title.toLowerCase()
+        const titleB = b.title.toLowerCase()
+        return (titleA < titleB) ? -1 : (titleA > titleB) ? 1 : 0
+      })
+      return items
+    },
+    sortedCategories () {
+      const categories = this.categories.map(category => ({
+        id: category.id,
+        name: category.name,
+        items: this.unchecked.filter(item => item.categoryId === category.id)
+      })).filter(category => category.items.length > 0)
+
+      const uncategorized = this.unchecked.filter(item => item.categoryId === null)
+
+      if (uncategorized.length > 0) {
+        categories.push({
+          id: '_id',
+          name: 'No category',
+          items: uncategorized
+        })
+      }
+
+      return categories
     }
   },
   methods: {
-    add (title) {
+    add (item) {
       this.items.push({
+        ...item,
         id: cuid(),
-        title,
+        createdAt: dayjs(),
         checked: false
       })
 
