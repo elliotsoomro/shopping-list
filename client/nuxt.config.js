@@ -1,7 +1,17 @@
+const baseUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/*$/, '')
+const apiUrl = (process.env.API_URL || 'http://localhost:4000').replace(/\/*$/, '')
+// const devApiUrl = process.env.DEV_API_URL || 'http://localhost:4000'
+
 export default {
+  publicRuntimeConfig: {
+    baseUrl,
+    apiUrl
+  },
+
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'shopping-list',
+    title: null,
+    titleTemplate: pageName => pageName ? `${pageName} – Shopping List` : 'Shopping List',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -18,6 +28,8 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+    '~/plugins/auth.js', // Crashes the client
+    '~/plugins/api.js'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -49,14 +61,26 @@ export default {
   fontawesome: {
     icons: {
       // solid: true,  // include the full pack in the bundle, not recommended
-      solid: ['faPen', 'faTrash', 'faAngleUp', 'faAngleDown']
+      solid: ['faPen', 'faTrash', 'faAngleUp', 'faAngleDown', 'faAngleLeft', 'faCog']
     }
   },
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: apiUrl,
+    withCredentials: true
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
   }
+
+  // proxy: {
+  //   '/api': {
+  //     target: devApiUrl,
+  //     pathRewrite: {
+  //       '^/api': '/'
+  //     }
+  //   }
+  // }
 }

@@ -1,24 +1,25 @@
 <template>
-  <nav
-    class="navbar header has-shadow is-primary"
-    role="navigation"
-    aria-label="main navigation"
-  >
-    <div class="navbar-brand">
-      <nuxt-link
-        class="navbar-item"
-        to="/"
-      >
+  <b-navbar>
+    <template #brand>
+      <b-navbar-item tag="nuxt-link" :to="{ path: '/' }">
         Shopping List
-      </nuxt-link>
+      </b-navbar-item>
+    </template>
 
-      <div class="navbar-burger">
-        <span />
-        <span />
-        <span />
-      </div>
-    </div>
-  </nav>
+    <template #end>
+      <b-navbar-item tag="div">
+        <div class="buttons">
+          <a v-if="!$auth.user" class="button is-light" @click="$auth.login()">
+            Log in
+          </a>
+
+          <a v-else class="button is-light" @click="$auth.logout()">
+            Logout
+          </a>
+        </div>
+      </b-navbar-item>
+    </template>
+  </b-navbar>
 </template>
 
 <script>

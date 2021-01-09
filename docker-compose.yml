@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  shopping-list-redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - shopping-list-redis:/data
+    # command: ['redis-server', '--bind', '0.0.0.0', '--port', '6379']
+    command: ['redis-server', '--appendonly', 'yes']
+
+  shopping-list-postgres:
+    image: postgres:12
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - shopping-list-postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=randompassword
+      - POSTGRES_USER=postgres
+
+volumes:
+  shopping-list-postgres:
+    external: true
+  shopping-list-redis:
+    external: true

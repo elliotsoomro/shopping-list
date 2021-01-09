@@ -1,5 +1,5 @@
 {
-  "name": "shopping-list",
+  "name": "shopping-list-client",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -14,10 +14,12 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/fontawesome": "^1.1.2",
+    "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/pwa": "^3.0.2",
     "core-js": "^3.6.5",
     "cuid": "^2.1.8",
     "dayjs": "^1.10.2",
+    "debounce": "^1.2.0",
     "nuxt": "^2.14.6",
     "nuxt-buefy": "^0.4.3",
     "nuxt-vue-select": "^0.1.4"
